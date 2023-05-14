@@ -38,9 +38,9 @@ import java.util.TimerTask;
 public class ReminderActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
-    private TextView tvCurrentTime, tvTitle;
+    private TextView tvCurrentTime, tvTitle, edTargetTime;
     private EditText edSetTime;
-    private Button btnSetTime,btnBack,btnStart;
+    private Button btnSetTime, btnBack, btnStart;
 
     AlertDialog.Builder builder;
 
@@ -58,20 +58,22 @@ public class ReminderActivity extends AppCompatActivity {
         btnSetTime = (Button) findViewById(R.id.btntime);
         btnBack = (Button) findViewById(R.id.btnback);
         btnStart = (Button) findViewById(R.id.btnstart);
+        edTargetTime = (TextView) findViewById(R.id.targetTime);
 
         updateTimer();
 
         btnSetTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),"Set Time Interval",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Set Time Interval", Toast.LENGTH_LONG).show();
+                edSetTime.setEnabled(false);
             }
         });
 
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),"Back to Main Menu",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Back to Main Menu", Toast.LENGTH_LONG).show();
                 Intent toHome = new Intent(ReminderActivity.this, MainActivity.class);
                 startActivity(toHome);
             }
@@ -80,17 +82,30 @@ public class ReminderActivity extends AppCompatActivity {
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                compareLogic(edSetTime.getText().toString());
+
+                String endingTime = "";
+
+                String[] hourMin = edSetTime.getText().toString().split(":");
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(new Date());
+                calendar.add(Calendar.HOUR, Integer.parseInt(hourMin[0]));
+                calendar.add(Calendar.MINUTE, Integer.parseInt(hourMin[1]));
+                SimpleDateFormat sdf = new SimpleDateFormat("hh:mm", Locale.getDefault());
+                endingTime = sdf.format(calendar.getTime());
+
+                edTargetTime.setText(endingTime);
+
+                Toast.makeText(getApplicationContext(), "You get notification in " + endingTime , Toast.LENGTH_LONG).show();
+                btnStart.setEnabled(false);
+                compareLogic(endingTime);
             }
         });
 
 
-
-
     }
 
-    public void updateTimer()
-    {
+    public void updateTimer() {
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -107,8 +122,8 @@ public class ReminderActivity extends AppCompatActivity {
         }, 1000, 1000);
     }
 
-    public void compareLogic(String targetTime)
-    {
+    public void compareLogic(String targetTime) {
+
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -118,44 +133,33 @@ public class ReminderActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm", Locale.getDefault());
                         String currentDateTime = sdf.format(new Date());
 
-
-                        String[] hourMin = targetTime.split(":");
-
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.setTime(new Date());
-                        calendar.add(Calendar.HOUR, Integer.parseInt(hourMin[0]));
-                        calendar.add(Calendar.MINUTE, Integer.parseInt(hourMin[1]));
-
-                        String endingTime = sdf.format(  calendar.getTime());
-
-                        Toast.makeText(getApplicationContext(),"You get notification in "+endingTime,Toast.LENGTH_LONG).show();
-
-                        if(currentDateTime.equals(endingTime))
-                        {
+                        if (currentDateTime.equals(targetTime)) {
                             timer.purge();
 
-                        builder = new AlertDialog.Builder(ReminderActivity.this);
-                        builder.setTitle("Break Time").setMessage("You Need a Break");
-                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+                            builder = new AlertDialog.Builder(ReminderActivity.this);
+                            builder.setTitle("Break Time").setMessage("You Need a Break");
+                            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    timer.cancel();
+                                    Intent toHome = new Intent(ReminderActivity.this, ReminderActivity.class);
+                                    startActivity(toHome);
+                                }
+                            });
+                            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
 
-                            }
-                        });
-                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+                                }
+                            });
 
-                            }
-                        });
-
-                        AlertDialog alert = builder.create();
-                        //Setting the title manually
-                        alert.setTitle("AlertDialogExample");
-                        alert.show();
+                            AlertDialog alert = builder.create();
+                            //Setting the title manually
+                            alert.setTitle("Break Time");
+                            alert.show();
 
                         }
 

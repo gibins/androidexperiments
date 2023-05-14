@@ -24,6 +24,10 @@
         app:layout_constraintTop_toTopOf="parent">
 
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="10dp" />
+
         <TextView
             android:id="@+id/tvtitle"
             android:layout_width="wrap_content"
@@ -31,11 +35,17 @@
             android:text="Break Time"
             android:textSize="30dp"
             android:fillViewport="true"/>
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="10dp" />
         <TextView
             android:id="@+id/tvcurrenttime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Current Time" />
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
 
         <LinearLayout
             android:layout_width="289dp"
@@ -53,7 +63,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="6"
-                android:inputType="time"
+                android:inputType="text"
+                android:hint="01:01"
                 android:layout_gravity="left"
                 android:layout_weight="1"/>
 
@@ -100,6 +111,22 @@
             android:background="@color/design_default_color_primary_variant"
             android:layout_gravity="center_vertical"/>
         </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/targetTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fillViewport="true"
+            android:text="00:00"
+            android:textAlignment="center"
+            android:textSize="80dp" />
+
+
 
     </LinearLayout>
 
