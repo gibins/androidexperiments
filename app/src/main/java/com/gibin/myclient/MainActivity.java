@@ -1,6 +1,7 @@
 package com.gibin.myclient;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import com.gibin.myclient.bluetooth.BluetoothMainActivity;
@@ -120,4 +121,6 @@ public class MainActivity extends AppCompatActivity {
        // NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return true;
     }
+
+
 }
